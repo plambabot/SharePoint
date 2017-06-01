@@ -1,0 +1,3 @@
+#Javascript to Change New Item to Upload and Item
+
+jQuery('a[title="Add a new item to this list or library."]').find('span').filter(function () { return jQuery(this).text() === 'new document'; }).text("Submit a New Paper");
