@@ -1,3 +1,4 @@
+JAVASCRIPT 
 #Javascript to Change new document to Submit a New Paper
 
 jQuery('a[title="Add a new item to this list or library."]').find('span').filter(function () { return jQuery(this).text() === 'new document'; }).text("Submit a New Paper");
