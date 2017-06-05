@@ -1,0 +1,11 @@
+#Check CurrentUser permission
+//It returns true and false
+bool currentUserPermisson = SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.FullMask);
+
+#Check currnt user for a specific group:
+SPSecurity.RunWithElevatedPrivileges(delegate()
+            {
+             SPGroup _group = SPContext.Current.Web.Groups["GroupName"];
+             SPContext.Current.Web.IsCurrentUserMemberOfGroup(_group.ID)//returns true or false
+             
+            });
