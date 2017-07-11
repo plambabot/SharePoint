@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>TypeScript HTML App</title>
+    <style type="text/css">
+        .tbl-hidden {
+            display: none !important;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css" type="text/css" />-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <!--<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>-->
+    <script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var table_searchResult = $("<table />");
+            table_searchResult[0].id = "tblSearchColl";
+            table_searchResult[0].className = "tbl-hidden";
+            table_searchResult[0].border = "1";
+            var SearchBody = new Array();
+            SearchBody.push(["Row No.", "DocId", "Title"]);
+
+            for (var i = 0; i < 10; i++) {
+                SearchBody.push([i, 'col1', 'col2']);
+            }
+
+            var columnCount = SearchBody[0].length;
+
+
+
+
+            //Add the header row.
+            var row = $(table_searchResult[0].insertRow(-1));
+            row[0].id = 'thead';
+            for (var i = 0; i < columnCount; i++) {
+                var headerCell = $("<th/>");
+                headerCell.html(SearchBody[0][i]);
+
+                row.append(headerCell);
+            }
+
+            //Add the data rows.
+            for (var i = 1; i < SearchBody.length; i++) {
+                row = $(table_searchResult[0].insertRow(-1));
+                for (var j = 0; j < columnCount; j++) {
+                    var cell = $("<td />");
+                    cell.html(SearchBody[i][j]);
+                    row.append(cell);
+                }
+            }
+
+            //$('#tblSearchColl').remove();
+            $("#SearchResultsDiv").append(table_searchResult);
+
+            var tblSearchColl = $("#tblSearchColl");
+            var thead = tblSearchColl.find("thead");
+            var thRows = tblSearchColl.find("tr:has(th)");
+
+            if (thead.length === 0) {  //if there is no thead element, add one.
+                thead = $("<thead></thead>").appendTo(tblSearchColl);
+            }
+
+            var copy = thRows.clone(true).appendTo("thead");
+            thRows.remove();
+
+
+
+            $('#tblSearchColl').DataTable({
+                searching: false,
+                paging: false,
+                "bSort": false,
+                "info": false,
+                dom: 'Bfrtip',
+                buttons: [
+                    //'copyHtml5',
+                    'excelHtml5'
+                    //'csvHtml5',
+                    //'pdfHtml5'
+                ]
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <h1>TypeScript HTML App</h1>
+
+    <div id="SearchResultsDiv"></div>
+
+</body>
+</html>
