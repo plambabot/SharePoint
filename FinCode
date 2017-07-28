@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<select ID="ddyear">
+  <option value="2017">2017</option>
+  <option value="2018">2018</option>
+</select>
+<select ID="ddMonth">
+  <option value="1">Jan</option>
+  <option value="2">Feb</option>
+  <option value="3">Mar</option>
+  <option value="4">Apr</option>
+  <option value="5">May</option>
+  <option value="6">Jun</option>
+  <option value="7">Jul</option>
+  <option value="8">Aug</option>
+  <option value="9">Sep</option>
+  <option value="10">Oct</option>
+  <option value="11">Nov</option>
+  <option value="12">Dec</option>
+</select>
+</br></br></br></br>
+<button type="button" onclick="fetchReport()">Fetch Report</button>
+<script>
+
+function fetchReport() 
+{
+	var Imonth = document.getElementById("ddMonth").value;
+	var Iyear = document.getElementById("ddyear").value;
+	retrieveListItems(Imonth, Iyear);
+}
+
+var siteUrl = '/fin/dashboards-V2';
+
+function retrieveListItems(Imonth, Iyear) {
+    var clientContext = new SP.ClientContext(siteUrl);
+    var oList = clientContext.get_web().get_lists().getByTitle('Report Inter');
+    var camlQuery = new SP.CamlQuery();
+    camlQuery.set_viewXml("<View><Query><Where><And><Leq><FieldRef Name='\Month_x002d_Num\' /><Value Type='\Number\'>"+Imonth+"</Value></Leq><Eq><FieldRef Name='\Year\' /><Value Type='\Text\'>"+Iyear+"</Value></Eq></And></Where></Query></View>");
+    this.collListItem = oList.getItems(camlQuery);
+    clientContext.load(collListItem);
+    clientContext.executeQueryAsync(Function.createDelegate(this, this.onQuerySucceeded), Function.createDelegate(this, this.onQueryFailed));	
+}
+function onQuerySucceeded(sender, args) 
+{
+	var listItemInfo = '';
+    var listItemEnumerator = collListItem.getEnumerator();
+	
+	while(listItemEnumerator.moveNext()){
+        var oListItem = listItemEnumerator.get_current();
+		var div = oListItem.get_item('Title');
+		var InterPlanned = parseInt(oListItem.get_item('Planned'));
+		var InterRef = parseInt(oListItem.get_item('Reforcast'));
+		var InterAct = parseInt(oListItem.get_item('Actual'));
+		var InterNorm = parseInt(oListItem.get_item('Actual_x0020_Normalised'));
+		
+	
+		GetReport(div);
+		
+		
+	}
+}
+function GetReport(div)
+{
+alert(div);
+var clientContext1 = new SP.ClientContext(siteUrl);
+		alert("1");
+ 
+
+		var oListReport = clientContext1.get_web().get_lists().getByTitle('Report');
+		var camlQuery1 = new SP.CamlQuery();
+		camlQuery1.set_viewXml("<View><Query><Where><Eq><FieldRef Name=\'Title\'/><Value Type=\'Text\'>"+div+"</Value></eq></Where></Query></View>");
+		alert("helo");
+		clientContext1.load(colListItem1, 'Include(FTM_x0020_Plan, FTM_x0020_Reforecast, FTM_x0020_Actual,FTM_x0020_Actual_x0020_Normalized,  YTD_x0020_Plan, YTD_x0020_Reforecast, YTD_x0020_Actual, YTD_x0020_Actual_x0020_Normalized)');
+		this.colListItem1 = oListReport.getItems(camlQuery1);
+		
+		clientContext1.load(colListItem1);
+		alert("helo");
+		
+var listItemInfo1 = '';
+		var listItemEnumerator1 = colListItem1.getEnumerator();
+		alert(listItemEnumerator1);
+		while (listItemEnumerator1.moveNext()) 
+		{
+		alert("in while");
+			alert('in second while');
+			var oListItemReport = listItemEnumerator1.get_current();
+			if(InterMonth == Imonth)
+			{
+				oListItemReport.set_item('FTM_x0020_Plan', InterPlanned);
+				oListItemReport.set_item('FTM_x0020_Reforecast', InterRef);
+				oListItemReport.set_item('FTM_x0020_Actual', InterAct);
+				oListItemReport.set_item('FTM_x0020_Actual_x0020_Normalized', InterNorm);
+			}
+			var ReportYTDPlan = parseInt(oListItemReport.get_item('YTD_x0020_Plan'));
+			ReportYTDPlan = ReportYTDPlan + InterPlanned;
+			oListItemReport.set_item('YTD_x0020_Plan', ReportYTDPlan);
+		
+			var ReportYTDRef = parseInt(oListItemReport.get_item('YTD_x0020_Reforecast'));
+			ReportYTDRef = ReportYTDRef + InterRef;
+			oListItemReport.set_item('YTD_x0020_Reforecast', ReportYTDRef);
+		
+			var ReportYTDAct = parseInt(oListItemReport.get_item('YTD_x0020_Actual'));
+			ReportYTDAct = ReportYTDAct + InterAct;
+			oListItemReport.set_item('YTD_x0020_Actual', ReportYTDAct);
+        
+			var ReportYTDNorm = parseInt(oListItemReport.get_item('YTD_x0020_Actual_x0020_Normalized'));
+			ReportYTDNorm = ReportYTDNorm + InterNorm;
+			oListItemReport.set_item('YTD_x0020_Actual_x0020_Normalized', ReportYTDNorm);
+		}
+		alert(done);
+return;
+}
+function onQueryFailed(sender, args) 
+{
+    alert('Request failed. ' + args.get_message() + '\n' + args.get_stackTrace());
+}
+</script>
+</body>
+</html>
